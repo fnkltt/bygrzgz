@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guillermo R.G. Gallery Preview</title>
+  <title>Guillermo R.G. Gallery</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     * {
@@ -13,18 +13,14 @@
     }
     body {
       font-family: 'Roboto', sans-serif;
-      background-color: #333333;
-      padding: 0;
+      background-color: #333;
       color: #111;
-    }
-    .demo-wrapper {
-      padding: 20px;
     }
     .container {
       background: white;
       max-width: 900px;
       width: 85%;
-      margin: 30px auto;
+      margin: 60px auto;
       padding: 30px 40px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     }
@@ -33,7 +29,6 @@
       flex-direction: column;
       align-items: flex-start;
       margin-bottom: 30px;
-      position: relative;
     }
     .circles {
       display: flex;
@@ -49,7 +44,6 @@
     .title {
       font-size: 22px;
       font-weight: 400;
-      letter-spacing: 0.5px;
       text-transform: uppercase;
     }
     .divider {
@@ -59,67 +53,25 @@
       width: 100%;
     }
     .gallery-container {
-      width: 100%;
       padding-left: 25%;
     }
     .gallery {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 2px;
-      width: 100%;
     }
     .gallery-item {
       position: relative;
       aspect-ratio: 1;
-      overflow: hidden;
       background-color: #eee;
+      overflow: hidden;
     }
     .gallery-item img {
       width: 100%;
       height: 100%;
-      display: block;
       object-fit: cover;
-      transition: transform 0.3s ease;
+      display: block;
     }
-    .gallery-item:nth-child(3n+1) {
-      background-color: #d4d4d4;
-    }
-    .gallery-item:nth-child(3n+2) {
-      background-color: #e0e0e0;
-    }
-    .gallery-item:nth-child(3n+3) {
-      background-color: #ececec;
-    }
-    
-    /* Device visualization */
-    .device-frame {
-      margin: 50px auto;
-      max-width: 1000px;
-      border: 12px solid #222;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-      background-color: #333333;
-    }
-    .device-frame.mobile {
-      max-width: 375px;
-      height: 667px;
-      overflow-y: auto;
-    }
-    .device-frame.tablet {
-      max-width: 768px;
-      height: 1024px;
-      overflow-y: auto;
-    }
-    .device-label {
-      text-align: center;
-      font-size: 24px;
-      margin: 30px 0;
-      font-weight: 500;
-      color: #fff;
-    }
-    
-    /* Mobile styles */
     @media (max-width: 900px) {
       .gallery-container {
         padding-left: 10%;
@@ -129,111 +81,38 @@
         width: 90%;
       }
     }
-    
-    /* Instagram-like mobile layout */
-    .mobile-container {
-      width: 100%;
-      padding: 20px;
-      background: white;
-    }
-    
-    .mobile-gallery-container {
-      margin: 0 -20px;
-      width: calc(100% + 40px);
-    }
-    
-    .mobile-gallery {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      width: 100%;
-    }
   </style>
 </head>
 <body>
-  <div class="demo-wrapper">
-    <div class="device-label">Desktop View</div>
-    <div class="device-frame desktop">
-      <div class="container">
-        <div class="header">
-          <div class="circles">
-            <div class="circle"></div>
-            <div class="circle"></div>
-            <div class="circle"></div>
-          </div>
-          <div class="title">Guillermo R.G.</div>
-        </div>
-        <div class="divider"></div>
-        <div class="gallery-container">
-          <div class="gallery" id="gallery-desktop">
-            <!-- Gallery items will be added here via JavaScript -->
-          </div>
-        </div>
+  <div class="container">
+    <div class="header">
+      <div class="circles">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
       </div>
+      <div class="title">Guillermo R.G.</div>
     </div>
-    
-    <div class="device-label">Tablet View</div>
-    <div class="device-frame tablet">
-      <div class="container">
-        <div class="header">
-          <div class="circles">
-            <div class="circle"></div>
-            <div class="circle"></div>
-            <div class="circle"></div>
-          </div>
-          <div class="title">Guillermo R.G.</div>
-        </div>
-        <div class="divider"></div>
-        <div class="gallery-container" style="padding-left: 10%;">
-          <div class="gallery" id="gallery-tablet">
-            <!-- Gallery items will be added here via JavaScript -->
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="device-label">Mobile View (Instagram-style)</div>
-    <div class="device-frame mobile">
-      <div class="mobile-container">
-        <div class="header">
-          <div class="circles">
-            <div class="circle"></div>
-            <div class="circle"></div>
-            <div class="circle"></div>
-          </div>
-          <div class="title">Guillermo R.G.</div>
-        </div>
-        <div class="divider"></div>
-        <div class="mobile-gallery-container">
-          <div class="mobile-gallery" id="gallery-mobile">
-            <!-- Gallery items will be added here via JavaScript -->
-          </div>
-        </div>
+    <div class="divider"></div>
+    <div class="gallery-container">
+      <div class="gallery" id="gallery">
+        <!-- Images will be added here -->
       </div>
     </div>
   </div>
+
   <script>
-    // Function to create gallery items with placeholder colors
-    function createGalleryItems(containerId, count) {
-      const container = document.getElementById(containerId);
-      for (let i = 1; i <= count; i++) {
-        const galleryItem = document.createElement('div');
-        galleryItem.className = 'gallery-item';
-        
-        // Create placeholder images
-        const placeholderImg = document.createElement('img');
-        placeholderImg.src = `/api/placeholder/${180+Math.floor(Math.random()*20)}/${180+Math.floor(Math.random()*20)}`;
-        placeholderImg.alt = `Gallery image ${i}`;
-        
-        galleryItem.appendChild(placeholderImg);
-        container.appendChild(galleryItem);
-      }
+    const container = document.getElementById('gallery');
+    for (let i = 1; i <= 15; i++) {
+      const div = document.createElement('div');
+      div.className = 'gallery-item';
+      const img = document.createElement('img');
+      img.src = `images/${i}.jpg`; // <-- make sure your images are in a folder named "images"
+      img.alt = `Gallery image ${i}`;
+      div.appendChild(img);
+      container.appendChild(div);
     }
-    
-    // Create gallery items for each device view
-    createGalleryItems('gallery-desktop', 15);
-    createGalleryItems('gallery-tablet', 12);
-    createGalleryItems('gallery-mobile', 15);
   </script>
 </body>
 </html>
+
