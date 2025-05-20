@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guillermo</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #ccc;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      background: #fff;
+      max-width: 960px;
+      width: 100%;
+      padding: 2rem 3rem 3rem 3rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      border-radius: 6px;
+    }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .circles {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .circle {
+      width: 14px;
+      height: 14px;
+      background-color: #444;
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+
+    h1 {
+      font-weight: 300;
+      font-size: 3rem;
+      margin: 0;
+      letter-spacing: 2px;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 1rem 0 2rem 0;
+      width: 100%;
+    }
+
+    .gallery-wrapper {
+      padding-left: 2rem; /* offset to right */
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+
+    .gallery img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      border-radius: 3px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      cursor: pointer;
