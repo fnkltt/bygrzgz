@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GR Portfolio Gallery</title>
   <style>
     * {
@@ -56,7 +56,7 @@
       background: #000;
       overflow: hidden;
     }
-    
+
     .sidebar-art img {
       width: 100%;
       height: 100%;
@@ -79,7 +79,7 @@
     .gallery-item {
       position: relative;
       height: 0;
-      padding-bottom: 100%; /* Maintain 1:1 aspect ratio */
+      padding-bottom: 100%;
       overflow: hidden;
       background-color: #f5f5f5;
     }
@@ -105,10 +105,32 @@
       z-index: 3;
     }
 
-    /* Mobile styles */
+    /* FEATURED IMAGE STYLE */
+    .featured-1, .featured-2, .featured-3 {
+      border: 2px solid #000;
+    }
+
+    /* CUSTOM CONTENT BLOCKS (OPTIONAL) */
+    .content-block {
+      background: white;
+      margin: 16px 0;
+      padding: 24px;
+      font-size: 18px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    /* RESPONSIVE */
     @media screen and (max-width: 768px) {
+      body {
+        padding: 0;
+      }
+
       .wrapper {
         flex-direction: column;
+        width: 100%;
+        max-width: none;
+        margin: 0;
       }
 
       .sidebar {
@@ -120,19 +142,29 @@
       .gr-logo {
         width: 60px;
         height: 60px;
+        font-size: 24px;
       }
 
       .sidebar-art {
         display: none;
       }
 
-      .gallery {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 4px;
-      }
-      
       .main {
-        padding: 4px;
+        padding: 0;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2px;
+      }
+
+      .gallery-item {
+        padding-bottom: 100%;
+      }
+
+      .content-block {
+        margin: 8px;
+        font-size: 16px;
       }
     }
   </style>
@@ -142,36 +174,53 @@
     <div class="sidebar">
       <div class="gr-logo">GR</div>
       <div class="sidebar-art">
-        <img src="sidebar.png" alt="Sidebar Art">
+        <img src="images/sidebar.png" alt="Sidebar Art" />
       </div>
     </div>
 
     <div class="main">
+      <!-- Optional content blocks -->
+      <div class="content-block">Welcome to GR Portfolio</div>
+
       <div class="gallery" id="gallery">
-        <!-- Images will be loaded dynamically with JavaScript -->
+        <!-- Fixed featured images -->
+        <div class="gallery-item featured-1">
+          <img src="images/featured-1.jpg" alt="Featured 1" />
+        </div>
+        <div class="gallery-item featured-2">
+          <img src="images/featured-2.jpg" alt="Featured 2" />
+        </div>
+        <div class="gallery-item featured-3">
+          <img src="images/featured-3.jpg" alt="Featured 3" />
+        </div>
+        <!-- Dynamic images via JS -->
       </div>
     </div>
   </div>
 
   <script>
     const gallery = document.getElementById('gallery');
-    const totalImages = 21; // Total number of images from 1.jpg to 21.jpg
-    
-    // Create gallery items for all images in reverse order (newest first)
+    const totalImages = 21;
+
     for (let i = totalImages; i >= 1; i--) {
       const galleryItem = document.createElement('div');
       galleryItem.className = 'gallery-item';
-      
+
       const saveIcon = document.createElement('div');
       saveIcon.className = 'save-icon';
       saveIcon.textContent = '+';
-      
+
       const img = document.createElement('img');
-      img.src = `${i}.jpg`;
+      img.src = `images/${i}.jpg`;
       img.alt = `Gallery Image ${i}`;
-      
+      img.onerror = () => {
+        img.style.display = 'none';
+      };
+
       galleryItem.appendChild(saveIcon);
       galleryItem.appendChild(img);
       gallery.appendChild(galleryItem);
     }
   </script>
+</body>
+</html>
