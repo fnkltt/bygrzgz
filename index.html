@@ -23,7 +23,7 @@
       display: flex;
       max-width: 800px;
       width: 100%;
-      gap: 24px;
+      gap: 16px;
       margin: 0 auto;
     }
 
@@ -34,41 +34,55 @@
       align-items: center;
       border: 1px solid black;
       background: white;
+      position: sticky;
+      top: 0;
+      padding: 8px 0;
     }
 
     .gr-logo {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       background: #000;
       color: white;
-      font-size: 36px;
+      font-size: 32px;
       font-weight: bold;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .divider {
+      width: 60%;
+      height: 1px;
+      background: #000;
+      margin: 6px 0;
     }
 
     .sidebar-art {
-      width: 100%;
+      width: 80px;
+      background: white;
     }
 
     .sidebar-art img {
       width: 100%;
       height: auto;
-      object-fit: cover;
+      object-fit: contain;
+      background: white;
+      padding: 4px;
     }
 
     .main {
       flex: 1;
       border: 1px solid black;
       background: #fff;
-      padding: 6px;
+      padding: 4px;
     }
 
     .gallery {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
+      gap: 1px;
     }
 
     .gallery-item {
@@ -86,7 +100,6 @@
       object-fit: cover;
     }
 
-    /* Featured images (only mobile) */
     .mobile-only {
       display: none;
     }
@@ -105,28 +118,36 @@
       }
 
       .sidebar {
-        flex-direction: column;
+        flex-direction: row;
         width: 100%;
-        height: 60px;
+        height: 50px;
         background: #000;
         position: sticky;
         top: 0;
         z-index: 100;
         border: none;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        padding: 0 12px;
+        justify-content: flex-start;
       }
 
       .gr-logo {
-        width: 60px;
-        height: 60px;
-        font-size: 24px;
-        margin: 0;
+        width: auto;
+        height: 100%;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+        background: none;
+        margin-right: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
       }
 
-      .sidebar-art {
+      .gr-logo::after {
+        content: "Guillermo R.G.";
+      }
+
+      .sidebar-art, .divider {
         display: none;
       }
 
@@ -138,7 +159,7 @@
 
       .gallery {
         grid-template-columns: repeat(3, 1fr);
-        gap: 1px;
+        gap: 0.5px;
       }
 
       .mobile-only {
@@ -149,18 +170,16 @@
 </head>
 <body>
   <div class="wrapper">
-    <!-- Sidebar -->
     <div class="sidebar">
-      <div class="gr-logo">GR</div>
+      <div class="gr-logo"></div>
+      <div class="divider"></div>
       <div class="sidebar-art">
         <img src="images/sidebar.png" alt="Sidebar Image">
       </div>
     </div>
 
-    <!-- Main Gallery -->
     <div class="main">
       <div class="gallery" id="gallery">
-        <!-- Featured images shown only on mobile -->
         <div class="gallery-item mobile-only">
           <img src="images/featured-1.jpg" alt="Featured 1" />
         </div>
@@ -170,27 +189,38 @@
         <div class="gallery-item mobile-only">
           <img src="images/featured-3.jpg" alt="Featured 3" />
         </div>
-        <!-- Main gallery images injected via JS -->
       </div>
     </div>
   </div>
 
   <script>
     const gallery = document.getElementById('gallery');
-    const totalImages = 21;
+    let totalImages = 21;
+    let currentImage = totalImages;
 
-    for (let i = totalImages; i >= 1; i--) {
-      const galleryItem = document.createElement('div');
-      galleryItem.className = 'gallery-item';
+    function loadImages(batch = 6) {
+      for (let i = 0; i < batch && currentImage >= 1; i++) {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item';
 
-      const img = document.createElement('img');
-      img.src = `images/${i}.jpg`;
-      img.alt = `Gallery Image ${i}`;
-      img.onerror = () => { img.style.display = 'none'; };
+        const img = document.createElement('img');
+        img.src = `images/${currentImage}.jpg`;
+        img.alt = `Gallery Image ${currentImage}`;
+        img.onerror = () => { img.style.display = 'none'; };
 
-      galleryItem.appendChild(img);
-      gallery.appendChild(galleryItem);
+        galleryItem.appendChild(img);
+        gallery.appendChild(galleryItem);
+        currentImage--;
+      }
     }
+
+    loadImages();
+
+    window.addEventListener('scroll', () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        loadImages();
+      }
+    });
   </script>
 </body>
 </html>
