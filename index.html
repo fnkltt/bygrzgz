@@ -1,21 +1,227 @@
-function loadImages() {
-  if (loaded === 0 && isMobile()) {
-    for (let i = 3; i >= 1; i--) {
-      const img = document.createElement('img');
-      img.src = `featured-${i}.jpg`;
-      img.alt = `featured-${i}`;
-      gallery.appendChild(img);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual Gallery</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-  }
 
-  for (let i = 0; i < batch && loaded < total; i++) {
-    const index = total - loaded;
-    const img = document.createElement('img');
-    img.src = `${index}.jpg`;
-    img.alt = `${index}`;
-    img.style.opacity = '0';
-    img.onload = () => img.style.opacity = '1';
-    gallery.appendChild(img);
-    loaded++;
-  }
-}
+    body {
+      font-family: sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      display: flex;
+      max-width: 1200px;
+      width: 100%;
+      padding: 40px 20px;
+      gap: 20px;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      opacity: 0.85;
+    }
+
+    .gr-square {
+      width: 80px;
+      height: 80px;
+      background: black;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 24px;
+    }
+
+    .sidebar-image {
+      width: 100%;
+      flex: 1;
+      object-fit: cover;
+    }
+
+    .sidebar::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, #f0f0f0);
+      pointer-events: none;
+    }
+
+    /* MAIN CONTENT */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .gallery img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      background: #ddd;
+      transition: opacity 0.3s ease-in;
+    }
+
+    /* MOBILE HEADER */
+    .mobile-header {
+      display: none;
+    }
+
+    /* MOBILE VERSION */
+    @media screen and (max-width: 768px) {
+      body {
+        justify-content: flex-start;
+      }
+
+      .container {
+        flex-direction: column;
+        padding: 0;
+        gap: 0;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .mobile-header {
+        display: flex;
+        position: sticky;
+        top: 0;
+        background: white;
+        padding: 8px;
+        z-index: 100;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #ccc;
+        transition: transform 0.3s ease;
+      }
+
+      .mobile-header.hidden {
+        transform: translateY(-100%);
+      }
+
+      .mobile-header .gr {
+        width: 50px;
+        height: 50px;
+        background: black;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 24px;
+      }
+
+      .mobile-header .rectangle {
+        width: 40px;
+        height: 50px;
+        background: #ccc;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-header" id="mobileHeader">
+    <div class="gr">GR</div>
+    <div class="rectangle"></div>
+  </div>
+  <div class="container">
+    <div class="sidebar">
+      <div class="gr-square">GR</div>
+      <img src="sidebar.png" alt="Sidebar" class="sidebar-image">
+    </div>
+    <div class="main">
+      <div class="gallery" id="gallery"></div>
+    </div>
+  </div>
+
+  <script>
+    const gallery = document.getElementById('gallery');
+    const total = 21;
+    let loaded = 0;
+    const batch = 10;
+    let lastScrollTop = 0;
+
+    function isMobile() {
+      return window.innerWidth <= 768;
+    }
+
+    function loadImages() {
+      if (loaded === 0 && isMobile()) {
+        for (let i = 3; i >= 1; i--) {
+          const img = document.createElement('img');
+          img.src = `featured-${i}.jpg`;
+          img.alt = `featured-${i}`;
+          gallery.appendChild(img);
+        }
+      }
+
+      for (let i = 0; i < batch && loaded < total; i++) {
+        const index = total - loaded;
+        const img = document.createElement('img');
+        img.src = `${index}.jpg`;
+        img.alt = `${index}`;
+        img.style.opacity = '0';
+        img.onload = () => img.style.opacity = '1';
+        gallery.appendChild(img);
+        loaded++;
+      }
+    }
+
+    function handleScroll() {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+        loadImages();
+      }
+
+      const currentScroll = window.scrollY;
+      const mobileHeader = document.getElementById('mobileHeader');
+
+      if (mobileHeader) {
+        if (currentScroll > lastScrollTop) {
+          mobileHeader.classList.add('hidden');
+        } else {
+          mobileHeader.classList.remove('hidden');
+        }
+      }
+
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+    }
+
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('load', () => {
+      loadImages();
+    });
+  </script>
+</body>
+</html>
