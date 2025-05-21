@@ -51,6 +51,7 @@
 
     .sidebar-image {
       width: 100%;
+      height: auto;
       object-fit: cover;
       flex: 1;
     }
@@ -58,7 +59,7 @@
     /* MAIN CONTENT */
     .main {
       margin-left: 60px;
-      padding: 20px;
+      padding: 40px 20px;
       width: 100%;
       display: flex;
       justify-content: center;
@@ -72,7 +73,7 @@
     .gallery {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
+      gap: 8px;
     }
 
     .gallery img {
@@ -154,7 +155,7 @@
   <div class="container">
     <div class="sidebar">
       <div class="gr-square">GR</div>
-      <img src="sidebar.png" alt="Sidebar" class="sidebar-image">
+      <img src="sidebar.png" alt="Sidebar" class="sidebar-image" onerror="this.style.display='none'">
     </div>
 
     <div class="main">
@@ -170,21 +171,24 @@
     let loaded = 0;
     const batch = 10;
     let lastScrollTop = 0;
+    let featuredLoaded = false;
 
     function isMobile() {
       return window.innerWidth <= 768;
     }
 
     function loadImages() {
-      if (loaded === 0 && isMobile()) {
+      if (isMobile() && !featuredLoaded) {
         for (let i = 3; i >= 1; i--) {
           const img = document.createElement('img');
           img.src = `featured-${i}.jpg`;
           img.alt = `Featured ${i}`;
           img.style.opacity = '0';
           img.onload = () => img.style.opacity = '1';
+          img.onerror = () => img.style.display = 'none';
           gallery.appendChild(img);
         }
+        featuredLoaded = true;
       }
 
       for (let i = 0; i < batch && loaded < total; i++) {
@@ -194,6 +198,7 @@
         img.alt = `Image ${index}`;
         img.style.opacity = '0';
         img.onload = () => img.style.opacity = '1';
+        img.onerror = () => img.style.display = 'none';
         gallery.appendChild(img);
         loaded++;
       }
@@ -219,9 +224,7 @@
     }
 
     window.addEventListener('scroll', handleScroll);
-    window.addEventListener('load', () => {
-      loadImages();
-    });
+    window.addEventListener('load', loadImages);
   </script>
 </body>
 </html>
