@@ -13,8 +13,9 @@
     }
 
     html, body {
-      height: 100%;
+      height: auto;
       overflow-x: hidden;
+      overflow-y: auto;
     }
 
     html {
@@ -135,10 +136,13 @@
     }
 
     @media screen and (max-width: 768px) {
-      body {
+      html, body {
         height: auto;
         overflow-x: hidden;
         overflow-y: auto;
+      }
+
+      body {
         padding: 0;
         background: #000;
         font-family: 'Roboto', sans-serif;
