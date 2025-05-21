@@ -12,129 +12,172 @@
     }
 
     body {
-      display: flex;
       font-family: sans-serif;
-      background: #888;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      display: flex;
+      max-width: 1200px;
+      width: 100%;
+      padding: 40px 20px;
+      gap: 20px;
     }
 
     /* SIDEBAR */
     .sidebar {
       width: 80px;
-      min-height: 100vh;
-      background: url('sidebar.png') no-repeat;
-      background-size: cover;
-      position: sticky;
-      top: 0;
-      filter: brightness(0.8);
-      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
     }
 
     .gr-square {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 80px;
       height: 80px;
       background: black;
       color: white;
-      font-weight: bold;
-      font-size: 28px;
       display: flex;
-      justify-content: center;
       align-items: center;
-      z-index: 1;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 24px;
     }
 
-    /* GALLERY */
+    .sidebar-image {
+      width: 100%;
+      flex: 1;
+      object-fit: cover;
+    }
+
+    .sidebar::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, #f0f0f0);
+      pointer-events: none;
+    }
+
+    /* MAIN CONTENT */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
     .gallery {
-      flex-grow: 1;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 2px;
-      padding: 2px;
-      overflow-y: auto;
     }
 
     .gallery img {
       width: 100%;
-      height: auto;
       display: block;
+      aspect-ratio: 1/1;
+      object-fit: cover;
     }
 
     /* MOBILE HEADER */
     .mobile-header {
       display: none;
-      position: sticky;
-      top: 0;
-      background: white;
-      padding: 5px;
-      z-index: 10;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #ccc;
     }
 
-    .mobile-header .gr {
-      width: 50px;
-      height: 50px;
-      background: black;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-    }
-
-    .mobile-header .rect {
-      height: 50px;
-      width: 30px;
-      background: #ccc;
-    }
-
+    /* MOBILE VERSION */
     @media screen and (max-width: 768px) {
       body {
+        justify-content: flex-start;
+      }
+
+      .container {
         flex-direction: column;
+        padding: 0;
+        gap: 0;
       }
 
       .sidebar {
         display: none;
       }
 
-      .gallery {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
       .mobile-header {
         display: flex;
+        position: sticky;
+        top: 0;
+        background: white;
+        padding: 8px;
+        z-index: 100;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .mobile-header .gr {
+        width: 50px;
+        height: 50px;
+        background: black;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 24px;
+      }
+
+      .mobile-header .rectangle {
+        width: 40px;
+        height: 50px;
+        background: #ccc;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2px;
       }
     }
   </style>
 </head>
 <body>
-
-  <div class="sidebar">
-    <div class="gr-square">GR</div>
-  </div>
-
   <div class="mobile-header">
     <div class="gr">GR</div>
-    <div class="rect"></div>
+    <div class="rectangle"></div>
   </div>
-
-  <div class="gallery" id="gallery">
-    <!-- Featured images -->
-    <img src="featured-3.jpg" alt="Featured 3">
-    <img src="featured-2.jpg" alt="Featured 2">
-    <img src="featured-1.jpg" alt="Featured 1">
+  <div class="container">
+    <div class="sidebar">
+      <div class="gr-square">GR</div>
+      <img src="sidebar.png" alt="Sidebar" class="sidebar-image">
+    </div>
+    <div class="main">
+      <div class="gallery" id="gallery"></div>
+    </div>
   </div>
 
   <script>
     const gallery = document.getElementById('gallery');
+    const total = 21;
     let loaded = 0;
-    const total = 549;
-    const batch = 30;
+    const batch = 10;
+
+    function isMobile() {
+      return window.innerWidth <= 768;
+    }
 
     function loadImages() {
+      if (loaded === 0 && isMobile()) {
+        for (let i = 3; i >= 1; i--) {
+          const img = document.createElement('img');
+          img.src = `featured-${i}.jpg`;
+          img.alt = `Featured ${i}`;
+          gallery.appendChild(img);
+        }
+      }
+
       for (let i = 0; i < batch && loaded < total; i++) {
         const index = total - loaded;
         const img = document.createElement('img');
@@ -145,12 +188,13 @@
       }
     }
 
-    window.addEventListener('scroll', () => {
+    function handleScroll() {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
         loadImages();
       }
-    });
+    }
 
+    window.addEventListener('scroll', handleScroll);
     window.addEventListener('load', () => {
       loadImages();
     });
