@@ -1,314 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GR Gallery</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #fff;
-            display: flex;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        /* Sidebar Styles */
-        .sidebar {
-            width: 120px;
-            background-color: #f0f0f0;
-            min-height: 100vh;
-            position: sticky;
-            top: 0;
-            display: flex;
-            flex-direction: column;
-            opacity: 0.9; /* Slightly faded as requested */
-        }
-        
-        .sidebar img {
-            width: 100%;
-            height: auto;
-        }
-        
-        .gr-logo {
-            background-color: #000;
-            color: #fff;
-            font-size: 40px;
-            font-weight: bold;
-            height: 120px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        /* Gallery Styles */
-        .gallery-container {
-            flex: 1;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px; /* Minimal spacing between images */
-            margin-top: 5px;
-        }
-        
-        .gallery-item {
-            position: relative;
-            width: 100%;
-            padding-bottom: 100%; /* Maintain square aspect ratio */
-            overflow: hidden;
-        }
-        
-        .gallery-item img {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: opacity 0.5s;
-        }
-        
-        /* Mobile Header */
-        .mobile-header {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background-color: #fff;
-            padding: 10px;
-            z-index: 100;
-            transition: transform 0.3s;
-        }
-        
-        .mobile-header-content {
-            display: flex;
-            align-items: center;
-        }
-        
-        .mobile-gr-logo {
-            background-color: #000;
-            color: #fff;
-            font-size: 24px;
-            font-weight: bold;
-            height: 40px;
-            width: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 10px;
-        }
-        
-        .mobile-rectangle {
-            height: 40px;
-            width: 100px;
-            background-color: #000;
-        }
-        
-        /* Featured images for mobile */
-        .featured-container {
-            display: none;
-        }
-        
-        /* Mobile Styles */
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                display: none;
-            }
-            
-            .mobile-header {
-                display: block;
-            }
-            
-            .gallery-container {
-                padding-top: 70px; /* Space for mobile header */
-            }
-            
-            .featured-container {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 5px;
-                position: sticky;
-                top: 60px;
-                background-color: #fff;
-                z-index: 50;
-                padding-bottom: 5px;
-            }
-            
-            .gallery {
-                margin-top: 0;
-            }
-            
-            .hide-header {
-                transform: translateY(-100%);
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Left Sidebar -->
-    <div class="sidebar">
-        <div class="gr-logo">GR</div>
-        <img src="sidebar.png" alt="Sidebar image">
-    </div>
-    
-    <!-- Mobile Header -->
-    <div class="mobile-header" id="mobileHeader">
-        <div class="mobile-header-content">
-            <div class="mobile-gr-logo">GR</div>
-            <div class="mobile-rectangle"></div>
-        </div>
-    </div>
-    
-    <!-- Main Gallery Container -->
-    <div class="gallery-container">
-        <!-- Featured images for mobile only -->
-        <div class="featured-container" id="featuredContainer">
-            <div class="gallery-item">
-                <img src="featured-1.jpg" alt="Featured 1">
-            </div>
-            <div class="gallery-item">
-                <img src="featured-2.jpg" alt="Featured 2">
-            </div>
-            <div class="gallery-item">
-                <img src="featured-3.jpg" alt="Featured 3">
-            </div>
-        </div>
-        
-        <!-- Main gallery grid -->
-        <div class="gallery" id="gallery">
-            <!-- Images will be loaded here via JavaScript -->
-        </div>
-    </div>
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-    <script>
-        // Total number of images
-        const totalImages = 549;
-        
-        // How many images to load at once
-        const batchSize = 12;
-        
-        // Current batch counter
-        let currentBatch = 0;
-        
-        // Track last scroll position for header hide/show
-        let lastScrollTop = 0;
-        
-        // Container for checking if we're near bottom
-        const galleryContainer = document.querySelector('.gallery-container');
-        const gallery = document.getElementById('gallery');
-        const mobileHeader = document.getElementById('mobileHeader');
-        
-        // Function to load images in reverse order
-        function loadImages(start, count) {
-            return new Promise((resolve) => {
-                let loaded = 0;
-                
-                for (let i = start; i > Math.max(start - count, 0); i--) {
-                    const imageNumber = i;
-                    const item = document.createElement('div');
-                    item.className = 'gallery-item';
-                    
-                    const img = document.createElement('img');
-                    img.src = `${imageNumber}.jpg`;
-                    img.alt = `Image ${imageNumber}`;
-                    img.style.opacity = '0';
-                    
-                    // Lazy loading with slow appearance effect
-                    img.onload = () => {
-                        setTimeout(() => {
-                            img.style.opacity = '1';
-                            loaded++;
-                            if (loaded === Math.min(count, start)) {
-                                resolve();
-                            }
-                        }, 100 * (Math.min(count, start) - loaded)); // Stagger the loading
-                    };
-                    
-                    img.onerror = () => {
-                        loaded++;
-                        if (loaded === Math.min(count, start)) {
-                            resolve();
-                        }
-                    };
-                    
-                    item.appendChild(img);
-                    gallery.appendChild(item);
-                }
-                
-                // If no images to load, resolve immediately
-                if (Math.min(count, start) === 0) {
-                    resolve();
-                }
+// Main App component
+const App = () => {
+    // State to manage the list of images to display
+    const [images, setImages] = useState([]);
+    // State to track the last loaded image number
+    const [lastLoadedImage, setLastLoadedImage] = useState(0);
+    // Total number of images (excluding featured)
+    const totalImages = 549;
+    // Number of images to load per batch for infinite scroll
+    const imagesPerBatch = 30;
+    // Ref for the gallery element to observe scrolling
+    const galleryRef = useRef(null);
+    // State for mobile header visibility
+    const [isMobileHeaderVisible, setIsMobileHeaderVisible] = useState(true);
+    // Ref to store the last scroll position for mobile header logic
+    const lastScrollY = useRef(0);
+    // State to determine if it's a mobile view
+    const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 768);
+
+    // Effect to handle window resize for mobile view detection
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobileView(window.innerWidth <= 768);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Callback function to load more images
+    const loadMoreImages = useCallback(() => {
+        // If all images are loaded, do nothing
+        if (lastLoadedImage >= totalImages) {
+            return;
+        }
+
+        const newImages = [];
+        let currentLoadCount = 0;
+
+        // Load featured images first if on mobile and no images loaded yet
+        if (isMobileView && lastLoadedImage === 0) {
+            for (let i = 1; i <= 3; i++) {
+                newImages.push({
+                    id: `featured-${i}`,
+                    src: `images/featured-${i}.jpg`,
+                    isFeatured: true
+                });
+                currentLoadCount++;
+            }
+        }
+
+        // Determine the start and end indices for loading regular images in reverse
+        // We start from the totalImages and go backwards, loading `imagesPerBatch` at a time.
+        // `startIndex` is the highest image number not yet loaded.
+        // `endIndex` is the lowest image number to load in this batch.
+        const startIndex = totalImages - lastLoadedImage;
+        const endIndex = Math.max(1, startIndex - (imagesPerBatch - currentLoadCount)); // Ensure we don't go below 1
+
+        for (let i = startIndex; i >= endIndex; i--) {
+            newImages.push({
+                id: i,
+                src: `images/${i}.jpg`,
+                isFeatured: false
             });
         }
-        
-        // Initial load
-        async function initialLoad() {
-            await loadImages(totalImages, batchSize);
-            currentBatch += batchSize;
-            
-            // Set up scroll event for infinite scroll with delay
-            let isLoading = false;
-            let scrollTimeout;
-            
-            window.addEventListener('scroll', () => {
-                // Clear previous timeout
-                clearTimeout(scrollTimeout);
-                
-                // Set a new timeout
-                scrollTimeout = setTimeout(() => {
-                    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-                    
-                    // Handle mobile header hiding
-                    if (window.innerWidth <= 768) {
-                        if (scrollTop > lastScrollTop && scrollTop > 60) {
-                            mobileHeader.classList.add('hide-header');
-                        } else {
-                            mobileHeader.classList.remove('hide-header');
-                        }
-                        lastScrollTop = scrollTop;
-                    }
-                    
-                    // Handle loading more images
-                    if (!isLoading) {
-                        const scrollHeight = document.documentElement.scrollHeight;
-                        const windowHeight = window.innerHeight;
-                        
-                        // Load more when user is close to bottom
-                        if (scrollTop + windowHeight > scrollHeight - 500) {
-                            isLoading = true;
-                            
-                            // Check if we have more images to load
-                            if (totalImages - currentBatch > 0) {
-                                loadImages(totalImages - currentBatch, batchSize).then(() => {
-                                    currentBatch += batchSize;
-                                    isLoading = false;
-                                });
-                            } else {
-                                isLoading = false;
-                            }
-                        }
-                    }
-                }, 100); // Small delay for performance
-            });
-        }
-        
-        // Start the loading process when the DOM is ready
-        document.addEventListener('DOMContentLoaded', initialLoad);
-    </script>
-</body>
-</html>
+
+        // Update the images state by prepending new images (for reverse order display)
+        // If featured images were added, they are already at the beginning of newImages.
+        // Otherwise, the newImages array is already in reverse order (e.g., [549, 548, ...])
+        setImages(prevImages => [...prevImages, ...newImages]);
+        setLastLoadedImage(prev => prev + (imagesPerBatch - currentLoadCount) + currentLoadCount); // Update count of all images loaded
+    }, [lastLoadedImage, totalImages, imagesPerBatch, isMobileView]);
+
+    // Effect for infinite scrolling (loading more images when user reaches bottom)
+    useEffect(() => {
+        const handleScroll = () => {
+            if (galleryRef.current) {
+                const { scrollTop, scrollHeight, clientHeight } = document.documentElement; // Use documentElement for whole page scroll
+                // Check if user is near the bottom of the page (e.g., within 200px)
+                if (scrollTop + clientHeight >= scrollHeight - 200) {
+                    loadMoreImages();
+                }
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        // Clean up the event listener when component unmounts
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [loadMoreImages]); // Dependency on loadMoreImages to ensure it's up-to-date
+
+    // Effect for mobile header disappearance on scroll
+    useEffect(() => {
+        const handleMobileHeaderScroll = () => {
+            if (!isMobileView) return; // Only apply on mobile view
+
+            const currentScrollY = window.scrollY;
+            // If scrolling down and past a certain threshold, hide the header
+            if (currentScrollY > lastScrollY.current && currentScrollY > 50) { // 50px threshold
+                setIsMobileHeaderVisible(false);
+            }
+            // If scrolling up, show the header
+            else if (currentScrollY < lastScrollY.current) {
+                setIsMobileHeaderVisible(true);
+            }
+            lastScrollY.current = currentScrollY;
+        };
+
+        window.addEventListener('scroll', handleMobileHeaderScroll);
+        return () => window.removeEventListener('scroll', handleMobileHeaderScroll);
+    }, [isMobileView]); // Dependency on isMobileView to re-run when view changes
+
+    // Initial load of images
+    useEffect(() => {
+        loadMoreImages();
+    }, [loadMoreImages]); // Call once on component mount
+
+    return (
+        <div className="flex flex-col md:flex-row min-h-screen font-inter">
+            {/* Mobile Header - only visible on small screens */}
+            <header className={`fixed top-0 left-0 w-full bg-white p-4 flex items-center justify-start z-20 transition-transform duration-300 ease-in-out ${isMobileHeaderVisible ? 'translate-y-0' : '-translate-y-full'} md:hidden`}>
+                {/* GR Cube for Mobile */}
+                <div className="w-10 h-10 bg-black text-white text-lg font-bold flex items-center justify-center mr-4 rounded-md">GR</div>
+                {/* Vertical Separator */}
+                <div className="w-1 h-6 bg-gray-300 rounded-sm"></div>
+            </header>
+
+            {/* Sidebar - hidden on small screens */}
+            <aside className="hidden md:flex flex-col items-center w-1/4 min-w-[150px] max-w-[250px] h-screen fixed left-0 top-0 bg-white bg-opacity-80 p-6 rounded-r-lg shadow-lg z-10">
+                {/* GR Cube for Desktop */}
+                <div className="relative w-24 h-24 bg-black text-white text-4xl font-bold flex items-center justify-center mb-8 rounded-lg overflow-hidden">
+                    GR
+                    {/* Gradient overlay for GR cube */}
+                    <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black to-transparent"></div>
+                </div>
+                {/* Sidebar Image */}
+                <img
+                    src="images/sidebar.png"
+                    alt="Sidebar Content"
+                    className="w-full h-auto rounded-lg"
+                    onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/200x400/cccccc/333333?text=Sidebar+Image"; }}
+                />
+            </aside>
+
+            {/* Main Gallery Content */}
+            <main ref={galleryRef} className="flex-1 grid grid-cols-3 gap-0.5 p-1 md:ml-[min(250px,25%)] md:pt-4 pt-[72px]">
+                {images.map((image) => (
+                    <div key={image.id} className="w-full aspect-square overflow-hidden">
+                        <img
+                            src={image.src}
+                            alt={`Gallery Image ${image.id}`}
+                            className="w-full h-full object-cover rounded-sm"
+                            loading="lazy" // Native lazy loading for images
+                            onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/300x300/cccccc/333333?text=Image+${image.id}`; }}
+                        />
+                    </div>
+                ))}
+            </main>
+        </div>
+    );
+};
+
+export default App;
+
