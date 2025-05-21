@@ -16,20 +16,19 @@
       background: #7d7d7d;
       display: flex;
       justify-content: center;
-      padding: 40px 20px;
+      padding: 60px 30px;
     }
 
     .wrapper {
       display: flex;
-      max-width: 800px;
+      max-width: 700px;
       width: 100%;
       gap: 16px;
-      margin: 0 auto;
+      margin-top: 40px;
     }
 
     .sidebar {
-      width: 100px;
-      display: flex;
+      display: inline-flex;
       flex-direction: column;
       align-items: center;
       border: 1px solid black;
@@ -42,7 +41,7 @@
       height: 80px;
       background: #000;
       color: white;
-      font-size: 72px;
+      font-size: 76px;
       font-weight: 900;
       display: flex;
       align-items: center;
@@ -109,6 +108,7 @@
       justify-content: center;
       z-index: 200;
     }
+
     .modal img {
       max-width: 90%;
       max-height: 90%;
@@ -128,6 +128,7 @@
         flex-direction: column;
         gap: 0;
         width: 100%;
+        margin-top: 0;
       }
 
       .sidebar {
@@ -194,6 +195,7 @@
 </head>
 <body>
   <div class="wrapper">
+    <!-- Sidebar -->
     <div class="sidebar">
       <div class="gr-logo"><span>GR</span></div>
       <div class="divider"></div>
@@ -202,15 +204,17 @@
       </div>
     </div>
 
+    <!-- Gallery -->
     <div class="main">
       <div class="gallery" id="gallery">
-        <div class="gallery-item mobile-only">
+        <!-- Featured images (both desktop & mobile) -->
+        <div class="gallery-item">
           <img src="images/featured-1.jpg" alt="Featured 1" />
         </div>
-        <div class="gallery-item mobile-only">
+        <div class="gallery-item">
           <img src="images/featured-2.jpg" alt="Featured 2" />
         </div>
-        <div class="gallery-item mobile-only">
+        <div class="gallery-item">
           <img src="images/featured-3.jpg" alt="Featured 3" />
         </div>
       </div>
@@ -240,10 +244,8 @@
       galleryItem.appendChild(img);
 
       galleryItem.addEventListener('click', () => {
-        if (window.innerWidth <= 768) {
-          modalImage.src = src;
-          modal.style.display = 'flex';
-        }
+        modalImage.src = src;
+        modal.style.display = 'flex';
       });
 
       return galleryItem;
@@ -258,6 +260,7 @@
       }
     }
 
+    // Preload 12 images to fill screen
     loadImages(12);
 
     window.addEventListener('scroll', () => {
