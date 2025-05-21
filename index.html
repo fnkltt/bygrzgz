@@ -4,29 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GR Portfolio Gallery</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: 'Helvetica', 'Arial', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
       background: #7d7d7d;
       display: flex;
       justify-content: center;
-      padding: 60px 20px;
-      font-family: Helvetica, Arial, sans-serif;
+      padding: 40px 20px;
     }
 
     .wrapper {
       display: flex;
       max-width: 800px;
       width: 100%;
-      gap: 24px;
+      gap: 16px;
       margin: 0 auto;
-      align-items: flex-start;
     }
 
     .sidebar {
@@ -37,7 +39,8 @@
       border: 1px solid black;
       background: white;
       padding: 8px 0;
-      flex-shrink: 0;
+      position: sticky;
+      top: 20px;
       align-self: flex-start;
     }
 
@@ -46,13 +49,13 @@
       height: 80px;
       background: #000;
       color: white;
-      font-size: 72px;
-      font-weight: bold;
+      font-size: 64px;
+      font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-bottom: 6px;
       overflow: hidden;
-      line-height: 1;
     }
 
     .divider {
@@ -113,7 +116,6 @@
       justify-content: center;
       z-index: 200;
     }
-
     .modal img {
       max-width: 90%;
       max-height: 90%;
@@ -127,7 +129,6 @@
       body {
         padding: 0;
         background: #000;
-        font-family: 'Roboto', sans-serif;
       }
 
       .wrapper {
@@ -152,8 +153,8 @@
       .gr-logo {
         width: auto;
         height: 100%;
-        font-size: 20px;
-        font-weight: 700;
+        font-size: 22px;
+        font-weight: 900;
         color: white;
         background: none;
         margin: 0;
@@ -162,6 +163,7 @@
         align-items: center;
         justify-content: flex-start;
         text-align: left;
+        font-family: 'Roboto', sans-serif;
       }
 
       .gr-logo::before {
@@ -210,14 +212,13 @@
 
     <div class="main">
       <div class="gallery" id="gallery">
-        <!-- Featured Images: now included on desktop too -->
-        <div class="gallery-item featured">
+        <div class="gallery-item mobile-only">
           <img src="images/featured-1.jpg" alt="Featured 1" />
         </div>
-        <div class="gallery-item featured">
+        <div class="gallery-item mobile-only">
           <img src="images/featured-2.jpg" alt="Featured 2" />
         </div>
-        <div class="gallery-item featured">
+        <div class="gallery-item mobile-only">
           <img src="images/featured-3.jpg" alt="Featured 3" />
         </div>
       </div>
@@ -263,7 +264,7 @@
       }
     }
 
-    loadImages(12); // Initial load fills the page
+    loadImages(12);
 
     window.addEventListener('scroll', () => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
