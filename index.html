@@ -16,56 +16,65 @@
       background: #7d7d7d;
       display: flex;
       justify-content: center;
-      padding: 20px;
+      padding: 40px 20px;
     }
 
     .wrapper {
       display: flex;
-      max-width: 1200px;
+      gap: 48px;
+      max-width: 900px;
       width: 100%;
-      background: white;
-      border: 1px solid #e0e0e0;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      margin: 0 auto;
+      background: transparent;
     }
 
     /* SIDEBAR */
     .sidebar {
       width: 100px;
-      background: #222;
+      border: 1px solid black;
       display: flex;
       flex-direction: column;
-      position: relative;
+      align-items: center;
+      padding: 8px 0;
+      background: white;
     }
 
     .gr-logo {
-      width: 100%;
-      height: 100px;
+      width: 60px;
+      height: 60px;
       background: #000;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      font-size: 32px;
-      letter-spacing: -1px;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .divider {
+      width: 80%;
+      height: 1px;
+      background: black;
+      margin-bottom: 16px;
     }
 
     .sidebar-art {
-      flex: 1;
-      width: 100%;
-      background: #000;
-      overflow: hidden;
+      padding: 0 10px;
     }
 
     .sidebar-art img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
+      display: block;
+      object-fit: contain;
+      background: white;
     }
 
     /* MAIN CONTENT */
     .main {
       flex: 1;
+      border: 1px solid black;
       padding: 8px;
       background: #fff;
     }
@@ -91,109 +100,91 @@
       object-fit: cover;
     }
 
-    .save-icon {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 24px;
-      height: 24px;
-      background: white;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 3;
+    /* Hide featured images on desktop */
+    .mobile-only {
+      display: none;
     }
 
-    /* FEATURED IMAGE STYLE */
-    .featured-1, .featured-2, .featured-3 {
-      border: 2px solid #000;
-    }
-
-    /* CUSTOM CONTENT BLOCKS (OPTIONAL) */
-    .content-block {
-      background: white;
-      margin: 16px 0;
-      padding: 24px;
-      font-size: 18px;
-      text-align: center;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-
-    /* RESPONSIVE */
+    /* === MOBILE OVERRIDES === */
     @media screen and (max-width: 768px) {
       body {
-        padding: 0;
+        padding: 10px;
       }
 
       .wrapper {
         flex-direction: column;
+        align-items: center;
         width: 100%;
-        max-width: none;
-        margin: 0;
+        gap: 16px;
       }
 
       .sidebar {
         width: 100%;
-        height: 60px;
         flex-direction: row;
+        justify-content: flex-start;
+        padding: 10px;
+        gap: 12px;
       }
 
       .gr-logo {
-        width: 60px;
-        height: 60px;
-        font-size: 24px;
+        margin-bottom: 0;
       }
 
-      .sidebar-art {
+      .divider {
         display: none;
       }
 
-      .main {
+      .sidebar-art {
         padding: 0;
+        flex: 1;
+      }
+
+      .sidebar-art img {
+        width: 60px;
+        height: auto;
+      }
+
+      .main {
+        width: 100%;
+        padding: 4px;
       }
 
       .gallery {
         grid-template-columns: repeat(3, 1fr);
-        gap: 2px;
+        gap: 4px;
       }
 
-      .gallery-item {
-        padding-bottom: 100%;
-      }
-
-      .content-block {
-        margin: 8px;
-        font-size: 16px;
+      .mobile-only {
+        display: block;
       }
     }
   </style>
 </head>
 <body>
   <div class="wrapper">
+    <!-- Sidebar -->
     <div class="sidebar">
       <div class="gr-logo">GR</div>
+      <div class="divider"></div>
       <div class="sidebar-art">
-        <img src="images/sidebar.png" alt="Sidebar Art" />
+        <img src="images/sidebar.png" alt="Sidebar Art">
       </div>
     </div>
 
+    <!-- Main Gallery -->
     <div class="main">
-      <!-- Optional content blocks -->
-      <div class="content-block">Welcome to GR Portfolio</div>
-
       <div class="gallery" id="gallery">
-        <!-- Fixed featured images -->
-        <div class="gallery-item featured-1">
+        <!-- Featured (only on mobile) -->
+        <div class="gallery-item mobile-only">
           <img src="images/featured-1.jpg" alt="Featured 1" />
         </div>
-        <div class="gallery-item featured-2">
+        <div class="gallery-item mobile-only">
           <img src="images/featured-2.jpg" alt="Featured 2" />
         </div>
-        <div class="gallery-item featured-3">
+        <div class="gallery-item mobile-only">
           <img src="images/featured-3.jpg" alt="Featured 3" />
         </div>
-        <!-- Dynamic images via JS -->
+        <!-- Dynamic gallery images -->
       </div>
     </div>
   </div>
@@ -206,18 +197,11 @@
       const galleryItem = document.createElement('div');
       galleryItem.className = 'gallery-item';
 
-      const saveIcon = document.createElement('div');
-      saveIcon.className = 'save-icon';
-      saveIcon.textContent = '+';
-
       const img = document.createElement('img');
       img.src = `images/${i}.jpg`;
       img.alt = `Gallery Image ${i}`;
-      img.onerror = () => {
-        img.style.display = 'none';
-      };
+      img.onerror = () => { img.style.display = 'none'; };
 
-      galleryItem.appendChild(saveIcon);
       galleryItem.appendChild(img);
       gallery.appendChild(galleryItem);
     }
