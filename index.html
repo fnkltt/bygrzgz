@@ -23,68 +23,56 @@
 
     /* SIDEBAR */
     .sidebar {
-      width: 80px;
+      width: 60px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      opacity: 0.85;
       background: white;
       position: fixed;
       top: 0;
       left: 0;
       bottom: 0;
       z-index: 50;
+      border-right: 1px solid #ddd;
     }
 
     .gr-square {
-      width: 80px;
-      height: 80px;
+      width: 60px;
+      height: 60px;
       background: black;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      font-size: 24px;
+      font-size: 20px;
     }
 
     .sidebar-image {
       width: 100%;
-      height: 100%;
       object-fit: cover;
       flex: 1;
     }
 
-    .sidebar::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background: linear-gradient(to bottom, transparent, #f0f0f0);
-      pointer-events: none;
-    }
-
     /* MAIN CONTENT */
     .main {
-      margin-left: 80px;
+      margin-left: 60px;
       padding: 20px;
+      width: 100%;
       display: flex;
       justify-content: center;
-      width: 100%;
     }
 
     .gallery-wrapper {
-      max-width: 960px;
       width: 100%;
+      max-width: 800px;
     }
 
     .gallery {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
+      gap: 6px;
     }
 
     .gallery img {
@@ -94,6 +82,7 @@
       object-fit: cover;
       background: #ddd;
       transition: opacity 0.3s ease-in;
+      border-radius: 4px;
     }
 
     .mobile-header {
@@ -110,6 +99,16 @@
         padding: 0;
       }
 
+      .gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
+        padding: 0 8px;
+      }
+
+      .gallery-wrapper {
+        max-width: 100%;
+      }
+
       .mobile-header {
         display: flex;
         position: sticky;
@@ -120,7 +119,6 @@
         align-items: center;
         justify-content: space-between;
         border-bottom: 1px solid #ccc;
-        transition: transform 0.3s ease;
       }
 
       .mobile-header.hidden {
@@ -143,10 +141,6 @@
         width: 40px;
         height: 50px;
         background: #ccc;
-      }
-
-      .gallery-wrapper {
-        padding: 0 8px;
       }
     }
   </style>
@@ -186,7 +180,9 @@
         for (let i = 3; i >= 1; i--) {
           const img = document.createElement('img');
           img.src = `featured-${i}.jpg`;
-          img.alt = `featured-${i}`;
+          img.alt = `Featured ${i}`;
+          img.style.opacity = '0';
+          img.onload = () => img.style.opacity = '1';
           gallery.appendChild(img);
         }
       }
@@ -195,7 +191,7 @@
         const index = total - loaded;
         const img = document.createElement('img');
         img.src = `${index}.jpg`;
-        img.alt = `${index}`;
+        img.alt = `Image ${index}`;
         img.style.opacity = '0';
         img.onload = () => img.style.opacity = '1';
         gallery.appendChild(img);
