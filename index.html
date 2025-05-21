@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GR Portfolio Gallery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Helvetica', 'Arial', sans-serif;
     }
 
     html {
@@ -21,6 +21,7 @@
       display: flex;
       justify-content: center;
       padding: 40px 20px;
+      font-family: 'Helvetica', 'Arial', sans-serif;
     }
 
     .wrapper {
@@ -28,7 +29,13 @@
       max-width: 800px;
       width: 100%;
       gap: 16px;
-      margin: 0 auto;
+    }
+
+    .sidebar-wrapper {
+      position: sticky;
+      top: 20px;
+      align-self: flex-start;
+      height: fit-content;
     }
 
     .sidebar {
@@ -39,9 +46,6 @@
       border: 1px solid black;
       background: white;
       padding: 8px 0;
-      position: sticky;
-      top: 20px;
-      align-self: flex-start;
     }
 
     .gr-logo {
@@ -49,7 +53,7 @@
       height: 80px;
       background: #000;
       color: white;
-      font-size: 64px;
+      font-size: 70px;
       font-weight: 900;
       display: flex;
       align-items: center;
@@ -116,6 +120,7 @@
       justify-content: center;
       z-index: 200;
     }
+
     .modal img {
       max-width: 90%;
       max-height: 90%;
@@ -129,6 +134,7 @@
       body {
         padding: 0;
         background: #000;
+        font-family: 'Roboto', sans-serif;
       }
 
       .wrapper {
@@ -137,14 +143,17 @@
         width: 100%;
       }
 
+      .sidebar-wrapper {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
       .sidebar {
         flex-direction: row;
         width: 100%;
         height: 50px;
         background: #000;
-        position: sticky;
-        top: 0;
-        z-index: 100;
         border: none;
         padding: 0 12px;
         justify-content: flex-start;
@@ -158,7 +167,6 @@
         color: white;
         background: none;
         margin: 0;
-        padding-left: 0;
         display: flex;
         align-items: center;
         justify-content: flex-start;
@@ -175,7 +183,8 @@
         display: none !important;
       }
 
-      .sidebar-art, .divider {
+      .sidebar-art,
+      .divider {
         display: none;
       }
 
@@ -192,33 +201,34 @@
 
       .mobile-only {
         display: block;
-        position: sticky;
-        top: 50px;
-        z-index: 10;
         background: #fff;
+        z-index: 10;
       }
     }
   </style>
 </head>
 <body>
   <div class="wrapper">
-    <div class="sidebar">
-      <div class="gr-logo"><span>GR</span></div>
-      <div class="divider"></div>
-      <div class="sidebar-art">
-        <img src="images/sidebar.png" alt="Sidebar Image">
+    <div class="sidebar-wrapper">
+      <div class="sidebar">
+        <div class="gr-logo"><span>GR</span></div>
+        <div class="divider"></div>
+        <div class="sidebar-art">
+          <img src="images/sidebar.png" alt="Sidebar Image">
+        </div>
       </div>
     </div>
 
     <div class="main">
       <div class="gallery" id="gallery">
-        <div class="gallery-item mobile-only">
+        <!-- Featured images for all views -->
+        <div class="gallery-item featured">
           <img src="images/featured-1.jpg" alt="Featured 1" />
         </div>
-        <div class="gallery-item mobile-only">
+        <div class="gallery-item featured">
           <img src="images/featured-2.jpg" alt="Featured 2" />
         </div>
-        <div class="gallery-item mobile-only">
+        <div class="gallery-item featured">
           <img src="images/featured-3.jpg" alt="Featured 3" />
         </div>
       </div>
@@ -278,6 +288,14 @@
 
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') modal.style.display = 'none';
+    });
+
+    // Enable enlargement on featured images too
+    document.querySelectorAll('.featured img').forEach(img => {
+      img.addEventListener('click', () => {
+        modalImage.src = img.src;
+        modal.style.display = 'flex';
+      });
     });
   </script>
 </body>
