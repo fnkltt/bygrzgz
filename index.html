@@ -34,8 +34,6 @@
       align-items: center;
       border: 1px solid black;
       background: white;
-      position: sticky;
-      top: 0;
       padding: 8px 0;
       height: auto;
     }
@@ -45,7 +43,7 @@
       height: 80px;
       background: #000;
       color: white;
-      font-size: 60px;
+      font-size: 66px;
       font-weight: 900;
       display: flex;
       align-items: center;
@@ -144,29 +142,19 @@
         border: none;
         padding: 0 12px;
         justify-content: flex-start;
+        align-items: center;
       }
 
       .gr-logo {
-        width: auto;
-        height: 100%;
-        font-size: 20px;
-        font-weight: 900;
+        display: none;
+      }
+
+      .mobile-only {
+        display: block;
         color: white;
-        background: none;
-        margin: 0;
-        padding-left: 0;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        text-align: left;
-      }
-
-      .gr-logo::before {
-        content: "Guillermo R.G.";
-      }
-
-      .gr-logo::after {
-        content: "";
+        font-size: 18px;
+        font-weight: bold;
+        margin-left: 0;
       }
 
       .sidebar-art, .divider {
@@ -183,28 +171,28 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 0.5px;
       }
-
-      .mobile-only {
-        display: block;
-      }
     }
   </style>
 </head>
 <body>
   <div class="wrapper">
+    <!-- Sidebar -->
     <div class="sidebar">
       <div class="gr-logo">GR</div>
+      <div class="mobile-only">Guillermo R.G.</div>
       <div class="divider"></div>
       <div class="sidebar-art">
         <img src="images/sidebar.png" alt="Sidebar Image">
       </div>
     </div>
 
+    <!-- Main Gallery -->
     <div class="main">
       <div class="gallery" id="gallery"></div>
     </div>
   </div>
 
+  <!-- Modal -->
   <div class="modal" id="imageModal">
     <img id="modalImage" src="" alt="Large Preview">
   </div>
@@ -241,21 +229,24 @@
       }
     }
 
+    // Load enough to fill screen initially
     loadImages(12);
 
+    // Infinite Scroll
     window.addEventListener('scroll', () => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
         loadImages();
       }
     });
 
+    // Modal closing
     modal.addEventListener('click', () => {
       modal.style.display = 'none';
     });
-
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') modal.style.display = 'none';
     });
   </script>
 </body>
 </html>
+
