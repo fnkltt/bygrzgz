@@ -16,38 +16,39 @@
       background: #7d7d7d;
       display: flex;
       justify-content: center;
-      padding: 60px 30px;
+      padding: 40px 20px;
     }
 
     .wrapper {
       display: flex;
-      max-width: 700px;
+      max-width: 800px;
       width: 100%;
       gap: 16px;
-      margin-top: 40px;
+      margin: 0 auto;
     }
 
     .sidebar {
-      display: inline-flex;
+      width: 100px;
+      display: flex;
       flex-direction: column;
       align-items: center;
       border: 1px solid black;
       background: white;
       padding: 8px 0;
+      height: auto;
     }
 
     .gr-logo {
-      width: 80px;
-      height: 80px;
+      width: 100px;
+      height: 100px;
       background: #000;
       color: white;
-      font-size: 76px;
+      font-size: 96px;
       font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 6px;
-      overflow: hidden;
     }
 
     .divider {
@@ -73,13 +74,13 @@
       flex: 1;
       border: 1px solid black;
       background: #fff;
-      padding: 4px;
+      padding: 12px;
     }
 
     .gallery {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
+      gap: 2px;
     }
 
     .gallery-item {
@@ -128,7 +129,6 @@
         flex-direction: column;
         gap: 0;
         width: 100%;
-        margin-top: 0;
       }
 
       .sidebar {
@@ -182,20 +182,11 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 0.5px;
       }
-
-      .mobile-only {
-        display: block;
-        position: sticky;
-        top: 50px;
-        z-index: 10;
-        background: #fff;
-      }
     }
   </style>
 </head>
 <body>
   <div class="wrapper">
-    <!-- Sidebar -->
     <div class="sidebar">
       <div class="gr-logo"><span>GR</span></div>
       <div class="divider"></div>
@@ -204,19 +195,9 @@
       </div>
     </div>
 
-    <!-- Gallery -->
     <div class="main">
       <div class="gallery" id="gallery">
-        <!-- Featured images (both desktop & mobile) -->
-        <div class="gallery-item">
-          <img src="images/featured-1.jpg" alt="Featured 1" />
-        </div>
-        <div class="gallery-item">
-          <img src="images/featured-2.jpg" alt="Featured 2" />
-        </div>
-        <div class="gallery-item">
-          <img src="images/featured-3.jpg" alt="Featured 3" />
-        </div>
+        <!-- Images will be added via JS -->
       </div>
     </div>
   </div>
@@ -251,6 +232,18 @@
       return galleryItem;
     }
 
+    // Load featured images first (visible on both mobile and desktop)
+    const featuredImages = [
+      { src: 'images/featured-1.jpg', alt: 'Featured 1' },
+      { src: 'images/featured-2.jpg', alt: 'Featured 2' },
+      { src: 'images/featured-3.jpg', alt: 'Featured 3' }
+    ];
+
+    featuredImages.forEach(({ src, alt }) => {
+      const item = createGalleryItem(src, alt);
+      gallery.appendChild(item);
+    });
+
     function loadImages(batch = 6) {
       if (currentImage < 1) return;
       for (let i = 0; i < batch && currentImage >= 1; i++) {
@@ -260,8 +253,7 @@
       }
     }
 
-    // Preload 12 images to fill screen
-    loadImages(12);
+    loadImages(12); // Initial load
 
     window.addEventListener('scroll', () => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
