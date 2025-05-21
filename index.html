@@ -3,71 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visual Gallery</title>
+  <title>GR Portfolio Gallery</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: 'Helvetica', 'Arial', sans-serif;
     }
 
     body {
-      font-family: sans-serif;
-      background: #f0f0f0;
+      background: #7d7d7d;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
     }
 
-    .container {
+    .wrapper {
       display: flex;
+      max-width: 1200px;
       width: 100%;
+      background: white;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     }
 
     /* SIDEBAR */
     .sidebar {
-      width: 60px;
+      width: 100px;
+      background: #222;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      background: white;
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      z-index: 50;
-      border-right: 1px solid #ddd;
+      position: relative;
     }
 
-    .gr-square {
-      width: 60px;
-      height: 60px;
-      background: black;
+    .gr-logo {
+      width: 100%;
+      height: 100px;
+      background: #000;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      font-size: 20px;
+      font-size: 32px;
+      letter-spacing: -1px;
     }
 
-    .sidebar-image {
-      width: 100%;
-      height: auto;
-      object-fit: cover;
+    .sidebar-art {
       flex: 1;
+      width: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+    
+    .sidebar-art img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     /* MAIN CONTENT */
     .main {
-      margin-left: 60px;
-      padding: 40px 20px;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-    }
-
-    .gallery-wrapper {
-      width: 100%;
-      max-width: 800px;
+      flex: 1;
+      padding: 8px;
+      background: #fff;
     }
 
     .gallery {
@@ -76,155 +76,102 @@
       gap: 8px;
     }
 
-    .gallery img {
+    .gallery-item {
+      position: relative;
+      height: 0;
+      padding-bottom: 100%; /* Maintain 1:1 aspect ratio */
+      overflow: hidden;
+      background-color: #f5f5f5;
+    }
+
+    .gallery-item img {
+      position: absolute;
       width: 100%;
-      display: block;
-      aspect-ratio: 1/1;
+      height: 100%;
       object-fit: cover;
-      background: #ddd;
-      transition: opacity 0.3s ease-in;
+    }
+
+    .save-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      background: white;
       border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
     }
 
-    .mobile-header {
-      display: none;
-    }
-
+    /* Mobile styles */
     @media screen and (max-width: 768px) {
-      .sidebar {
-        display: none;
+      .wrapper {
+        flex-direction: column;
       }
 
-      .main {
-        margin-left: 0;
-        padding: 0;
+      .sidebar {
+        width: 100%;
+        height: 60px;
+        flex-direction: row;
+      }
+
+      .gr-logo {
+        width: 60px;
+        height: 60px;
+      }
+
+      .sidebar-art {
+        display: none;
       }
 
       .gallery {
         grid-template-columns: repeat(2, 1fr);
         gap: 4px;
-        padding: 0 8px;
       }
-
-      .gallery-wrapper {
-        max-width: 100%;
-      }
-
-      .mobile-header {
-        display: flex;
-        position: sticky;
-        top: 0;
-        background: white;
-        padding: 8px;
-        z-index: 100;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid #ccc;
-      }
-
-      .mobile-header.hidden {
-        transform: translateY(-100%);
-      }
-
-      .mobile-header .gr {
-        width: 50px;
-        height: 50px;
-        background: black;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 24px;
-      }
-
-      .mobile-header .rectangle {
-        width: 40px;
-        height: 50px;
-        background: #ccc;
+      
+      .main {
+        padding: 4px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="mobile-header" id="mobileHeader">
-    <div class="gr">GR</div>
-    <div class="rectangle"></div>
-  </div>
-
-  <div class="container">
+  <div class="wrapper">
     <div class="sidebar">
-      <div class="gr-square">GR</div>
-      <img src="sidebar.png" alt="Sidebar" class="sidebar-image" onerror="this.style.display='none'">
+      <div class="gr-logo">GR</div>
+      <div class="sidebar-art">
+        <img src="sidebar.png" alt="Sidebar Art">
+      </div>
     </div>
 
     <div class="main">
-      <div class="gallery-wrapper">
-        <div class="gallery" id="gallery"></div>
+      <div class="gallery" id="gallery">
+        <!-- Images will be loaded dynamically with JavaScript -->
       </div>
     </div>
   </div>
 
   <script>
     const gallery = document.getElementById('gallery');
-    const total = 21;
-    let loaded = 0;
-    const batch = 10;
-    let lastScrollTop = 0;
-    let featuredLoaded = false;
-
-    function isMobile() {
-      return window.innerWidth <= 768;
+    const totalImages = 21; // Total number of images from 1.jpg to 21.jpg
+    
+    // Create gallery items for all images in reverse order (newest first)
+    for (let i = totalImages; i >= 1; i--) {
+      const galleryItem = document.createElement('div');
+      galleryItem.className = 'gallery-item';
+      
+      const saveIcon = document.createElement('div');
+      saveIcon.className = 'save-icon';
+      saveIcon.textContent = '+';
+      
+      const img = document.createElement('img');
+      img.src = `${i}.jpg`;
+      img.alt = `Gallery Image ${i}`;
+      
+      galleryItem.appendChild(saveIcon);
+      galleryItem.appendChild(img);
+      gallery.appendChild(galleryItem);
     }
-
-    function loadImages() {
-      if (isMobile() && !featuredLoaded) {
-        for (let i = 3; i >= 1; i--) {
-          const img = document.createElement('img');
-          img.src = `featured-${i}.jpg`;
-          img.alt = `Featured ${i}`;
-          img.style.opacity = '0';
-          img.onload = () => img.style.opacity = '1';
-          img.onerror = () => img.style.display = 'none';
-          gallery.appendChild(img);
-        }
-        featuredLoaded = true;
-      }
-
-      for (let i = 0; i < batch && loaded < total; i++) {
-        const index = total - loaded;
-        const img = document.createElement('img');
-        img.src = `${index}.jpg`;
-        img.alt = `Image ${index}`;
-        img.style.opacity = '0';
-        img.onload = () => img.style.opacity = '1';
-        img.onerror = () => img.style.display = 'none';
-        gallery.appendChild(img);
-        loaded++;
-      }
-    }
-
-    function handleScroll() {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
-        loadImages();
-      }
-
-      const currentScroll = window.scrollY;
-      const mobileHeader = document.getElementById('mobileHeader');
-
-      if (mobileHeader) {
-        if (currentScroll > lastScrollTop) {
-          mobileHeader.classList.add('hidden');
-        } else {
-          mobileHeader.classList.remove('hidden');
-        }
-      }
-
-      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-    }
-
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('load', loadImages);
   </script>
-</body>
-</html>
