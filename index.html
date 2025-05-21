@@ -44,12 +44,12 @@
       height: 80px;
       background: #000;
       color: white;
-      font-size: 32px;
-      font-weight: bold;
+      font-size: 48px;
+      font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .divider {
@@ -105,7 +105,6 @@
       display: none;
     }
 
-    /* Modal for enlarged image */
     .modal {
       position: fixed;
       top: 0; left: 0;
@@ -121,7 +120,6 @@
       max-height: 90%;
     }
 
-    /* MOBILE VERSION */
     @media screen and (max-width: 768px) {
       body {
         padding: 0;
@@ -150,14 +148,16 @@
       .gr-logo {
         width: auto;
         height: 100%;
-        font-size: 18px;
-        font-weight: bold;
+        font-size: 20px;
+        font-weight: 900;
         color: white;
         background: none;
-        margin-right: 8px;
+        margin: 0;
+        padding-left: 8px;
         display: flex;
         align-items: center;
         justify-content: flex-start;
+        text-align: left;
       }
 
       .gr-logo::after {
@@ -236,7 +236,7 @@
       }
     }
 
-    loadImages();
+    loadImages(12);
 
     window.addEventListener('scroll', () => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
