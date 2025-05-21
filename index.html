@@ -14,18 +14,12 @@
 
     html {
       scroll-behavior: smooth;
-      height: 100%;
-      overflow-y: auto;
     }
 
     body {
       background: #7d7d7d;
-      display: flex;
-      justify-content: center;
       padding: 40px 20px;
       font-family: 'Helvetica', 'Arial', sans-serif;
-      height: 100%;
-      overflow-y: auto;
     }
 
     .wrapper {
@@ -33,6 +27,7 @@
       max-width: 800px;
       width: 100%;
       gap: 16px;
+      margin: 0 auto;
     }
 
     .sidebar-wrapper {
@@ -225,7 +220,6 @@
 
     <div class="main">
       <div class="gallery" id="gallery">
-        <!-- Featured images for all views -->
         <div class="gallery-item featured">
           <img src="images/featured-1.jpg" alt="Featured 1" />
         </div>
@@ -294,7 +288,6 @@
       if (e.key === 'Escape') modal.style.display = 'none';
     });
 
-    // Enable enlargement on featured images too
     document.querySelectorAll('.featured img').forEach(img => {
       img.addEventListener('click', () => {
         modalImage.src = img.src;
