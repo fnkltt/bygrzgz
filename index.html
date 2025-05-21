@@ -1,191 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Gallery</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual Gallery</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <style>
-        /* Custom font for Inter */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Ensure images maintain aspect ratio within their containers */
-        .aspect-square {
-            aspect-ratio: 1 / 1;
-        }
-    </style>
+    body {
+      display: flex;
+      font-family: sans-serif;
+      background: #888;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 80px;
+      min-height: 100vh;
+      background: url('sidebar.png') no-repeat;
+      background-size: cover;
+      position: sticky;
+      top: 0;
+      filter: brightness(0.8);
+      flex-shrink: 0;
+    }
+
+    .gr-square {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 80px;
+      height: 80px;
+      background: black;
+      color: white;
+      font-weight: bold;
+      font-size: 28px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+
+    /* GALLERY */
+    .gallery {
+      flex-grow: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      padding: 2px;
+      overflow-y: auto;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* MOBILE HEADER */
+    .mobile-header {
+      display: none;
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 5px;
+      z-index: 10;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .mobile-header .gr {
+      width: 50px;
+      height: 50px;
+      background: black;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .mobile-header .rect {
+      height: 50px;
+      width: 30px;
+      background: #ccc;
+    }
+
+    @media screen and (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .mobile-header {
+        display: flex;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div id="root"></div>
 
-    <script type="text/babel">
-        // React component code starts here
-        const App = () => {
-            // State to manage the list of images to display
-            const [images, setImages] = React.useState([]);
-            // State to track the last loaded image number
-            const [lastLoadedImage, setLastLoadedImage] = React.useState(0);
-            // Total number of images (excluding featured)
-            const totalImages = 549;
-            // Number of images to load per batch for infinite scroll
-            const imagesPerBatch = 30;
-            // Ref for the gallery element to observe scrolling (not strictly needed for window scroll, but good practice)
-            const galleryRef = React.useRef(null);
-            // State for mobile header visibility
-            const [isMobileHeaderVisible, setIsMobileHeaderVisible] = React.useState(true);
-            // Ref to store the last scroll position for mobile header logic
-            const lastScrollY = React.useRef(0);
-            // State to determine if it's a mobile view
-            const [isMobileView, setIsMobileView] = React.useState(window.innerWidth <= 768);
+  <div class="sidebar">
+    <div class="gr-square">GR</div>
+  </div>
 
-            // Effect to handle window resize for mobile view detection
-            React.useEffect(() => {
-                const handleResize = () => {
-                    setIsMobileView(window.innerWidth <= 768);
-                };
-                window.addEventListener('resize', handleResize);
-                return () => window.removeEventListener('resize', handleResize);
-            }, []);
+  <div class="mobile-header">
+    <div class="gr">GR</div>
+    <div class="rect"></div>
+  </div>
 
-            // Callback function to load more images
-            const loadMoreImages = React.useCallback(() => {
-                // If all images are loaded, do nothing
-                if (lastLoadedImage >= totalImages) {
-                    return;
-                }
+  <div class="gallery" id="gallery">
+    <!-- Featured images -->
+    <img src="featured-3.jpg" alt="Featured 3">
+    <img src="featured-2.jpg" alt="Featured 2">
+    <img src="featured-1.jpg" alt="Featured 1">
+  </div>
 
-                const newImages = [];
-                let currentLoadCount = 0;
+  <script>
+    const gallery = document.getElementById('gallery');
+    let loaded = 0;
+    const total = 549;
+    const batch = 30;
 
-                // Load featured images first if on mobile and no images loaded yet
-                if (isMobileView && lastLoadedImage === 0) {
-                    for (let i = 1; i <= 3; i++) {
-                        newImages.push({
-                            id: `featured-${i}`,
-                            src: `images/featured-${i}.jpg`,
-                            isFeatured: true
-                        });
-                        currentLoadCount++;
-                    }
-                }
+    function loadImages() {
+      for (let i = 0; i < batch && loaded < total; i++) {
+        const index = total - loaded;
+        const img = document.createElement('img');
+        img.src = `${index}.jpg`;
+        img.alt = `Image ${index}`;
+        gallery.appendChild(img);
+        loaded++;
+      }
+    }
 
-                // Determine the start and end indices for loading regular images in reverse
-                // We start from the totalImages and go backwards, loading `imagesPerBatch` at a time.
-                // `startIndex` is the highest image number not yet loaded.
-                // `endIndex` is the lowest image number to load in this batch.
-                const startIndex = totalImages - lastLoadedImage;
-                const endIndex = Math.max(1, startIndex - (imagesPerBatch - currentLoadCount)); // Ensure we don't go below 1
+    window.addEventListener('scroll', () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+        loadImages();
+      }
+    });
 
-                for (let i = startIndex; i >= endIndex; i--) {
-                    newImages.push({
-                        id: i,
-                        src: `images/${i}.jpg`,
-                        isFeatured: false
-                    });
-                }
-
-                // Update the images state by prepending new images (for reverse order display)
-                // If featured images were added, they are already at the beginning of newImages.
-                // Otherwise, the newImages array is already in reverse order (e.g., [549, 548, ...])
-                setImages(prevImages => [...prevImages, ...newImages]);
-                setLastLoadedImage(prev => prev + (imagesPerBatch - currentLoadCount) + currentLoadCount); // Update count of all images loaded
-            }, [lastLoadedImage, totalImages, imagesPerBatch, isMobileView]);
-
-            // Effect for infinite scrolling (loading more images when user reaches bottom)
-            React.useEffect(() => {
-                const handleScroll = () => {
-                    // Use document.documentElement for whole page scroll
-                    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-                    // Check if user is near the bottom of the page (e.g., within 200px)
-                    if (scrollTop + clientHeight >= scrollHeight - 200) {
-                        loadMoreImages();
-                    }
-                };
-
-                window.addEventListener('scroll', handleScroll);
-                // Clean up the event listener when component unmounts
-                return () => window.removeEventListener('scroll', handleScroll);
-            }, [loadMoreImages]); // Dependency on loadMoreImages to ensure it's up-to-date
-
-            // Effect for mobile header disappearance on scroll
-            React.useEffect(() => {
-                const handleMobileHeaderScroll = () => {
-                    if (!isMobileView) return; // Only apply on mobile view
-
-                    const currentScrollY = window.scrollY;
-                    // If scrolling down and past a certain threshold, hide the header
-                    if (currentScrollY > lastScrollY.current && currentScrollY > 50) { // 50px threshold
-                        setIsMobileHeaderVisible(false);
-                    }
-                    // If scrolling up, show the header
-                    else if (currentScrollY < lastScrollY.current) {
-                        setIsMobileHeaderVisible(true);
-                    }
-                    lastScrollY.current = currentScrollY;
-                };
-
-                window.addEventListener('scroll', handleMobileHeaderScroll);
-                return () => window.removeEventListener('scroll', handleMobileHeaderScroll);
-            }, [isMobileView]); // Dependency on isMobileView to re-run when view changes
-
-            // Initial load of images
-            React.useEffect(() => {
-                loadMoreImages();
-            }, [loadMoreImages]); // Call once on component mount
-
-            return (
-                <div className="flex flex-col md:flex-row min-h-screen font-inter">
-                    {/* Mobile Header - only visible on small screens */}
-                    <header className={`fixed top-0 left-0 w-full bg-white p-4 flex items-center justify-start z-20 transition-transform duration-300 ease-in-out ${isMobileHeaderVisible ? 'translate-y-0' : '-translate-y-full'} md:hidden`}>
-                        {/* GR Cube for Mobile */}
-                        <div className="w-10 h-10 bg-black text-white text-lg font-bold flex items-center justify-center mr-4 rounded-md">GR</div>
-                        {/* Vertical Separator */}
-                        <div className="w-1 h-6 bg-gray-300 rounded-sm"></div>
-                    </header>
-
-                    {/* Sidebar - hidden on small screens */}
-                    <aside className="hidden md:flex flex-col items-center w-1/4 min-w-[150px] max-w-[250px] h-screen fixed left-0 top-0 bg-white bg-opacity-80 p-6 rounded-r-lg shadow-lg z-10">
-                        {/* GR Cube for Desktop */}
-                        <div className="relative w-24 h-24 bg-black text-white text-4xl font-bold flex items-center justify-center mb-8 rounded-lg overflow-hidden">
-                            GR
-                            {/* Gradient overlay for GR cube */}
-                            <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black to-transparent"></div>
-                        </div>
-                        {/* Sidebar Image */}
-                        <img
-                            src="images/sidebar.png"
-                            alt="Sidebar Content"
-                            className="w-full h-auto rounded-lg"
-                            onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/200x400/cccccc/333333?text=Sidebar+Image"; }}
-                        />
-                    </aside>
-
-                    {/* Main Gallery Content */}
-                    <main ref={galleryRef} className="flex-1 grid grid-cols-3 gap-0.5 p-1 md:ml-[min(250px,25%)] md:pt-4 pt-[72px]">
-                        {images.map((image) => (
-                            <div key={image.id} className="w-full aspect-square overflow-hidden">
-                                <img
-                                    src={image.src}
-                                    alt={`Gallery Image ${image.id}`}
-                                    className="w-full h-full object-cover rounded-sm"
-                                    loading="lazy" // Native lazy loading for images
-                                    onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/300x300/cccccc/333333?text=Image+${image.id}`; }}
-                                />
-                            </div>
-                        ))}
-                    </main>
-                </div>
-            );
-        };
-
-        // Render the App component into the 'root' div
-        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-    </script>
+    window.addEventListener('load', () => {
+      loadImages();
+    });
+  </script>
 </body>
 </html>
