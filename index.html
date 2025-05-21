@@ -248,6 +248,7 @@
     const modalImage = document.getElementById('modalImage');
     let totalImages = 519;
     let currentImage = totalImages;
+    let isLoading = false;
 
     function createGalleryItem(src, alt) {
       const galleryItem = document.createElement('div');
@@ -269,13 +270,19 @@
       return galleryItem;
     }
 
-    function loadImages(batch = 6) {
-      if (currentImage < 1) return;
+    function loadImages(batch = 12) {
+      if (currentImage < 1 || isLoading) return;
+      isLoading = true;
+
       for (let i = 0; i < batch && currentImage >= 1; i++) {
         const item = createGalleryItem(`images/${currentImage}.jpg`, `Gallery Image ${currentImage}`);
         gallery.appendChild(item);
         currentImage--;
       }
+
+      setTimeout(() => {
+        isLoading = false;
+      }, 300);
     }
 
     loadImages(12);
