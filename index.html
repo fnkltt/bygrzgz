@@ -12,20 +12,16 @@
       padding: 0;
     }
 
-    html, body {
-      height: auto;
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-
     html {
       scroll-behavior: smooth;
+      overflow-x: hidden;
     }
 
     body {
       background: #7d7d7d;
       padding: 40px 20px;
       font-family: 'Helvetica', 'Arial', sans-serif;
+      min-height: 100vh;
     }
 
     .wrapper {
@@ -137,9 +133,7 @@
 
     @media screen and (max-width: 768px) {
       html, body {
-        height: auto;
         overflow-x: hidden;
-        overflow-y: auto;
       }
 
       body {
@@ -231,7 +225,6 @@
 
     <div class="main">
       <div class="gallery" id="gallery">
-        <!-- Featured images for all views -->
         <div class="gallery-item featured">
           <img src="images/featured-1.jpg" alt="Featured 1" />
         </div>
@@ -288,7 +281,7 @@
     loadImages(12);
 
     window.addEventListener('scroll', () => {
-      if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 100) {
+      if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 200) {
         loadImages();
       }
     });
@@ -301,7 +294,6 @@
       if (e.key === 'Escape') modal.style.display = 'none';
     });
 
-    // Enable enlargement on featured images too
     document.querySelectorAll('.featured img').forEach(img => {
       img.addEventListener('click', () => {
         modalImage.src = img.src;
