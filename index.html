@@ -196,11 +196,17 @@
         border: none;
         padding: 0;
         width: 100%;
+        background: #000;
       }
 
       .gallery {
         grid-template-columns: repeat(3, 1fr);
-        gap: 0.5px;
+        gap: 1px;
+        background: #000;
+      }
+
+      .gallery-item {
+        background-color: #000;
       }
 
       .mobile-only {
@@ -257,6 +263,8 @@
       img.src = src;
       img.alt = alt;
       img.loading = "lazy";
+      img.srcset = `${src} 480w`;
+      img.sizes = "(max-width: 768px) 33vw, 200px";
       img.onerror = () => {
         galleryItem.style.display = 'none';
       };
