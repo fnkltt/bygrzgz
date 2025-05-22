@@ -259,17 +259,19 @@
     function createGalleryItem(src, alt) {
       const galleryItem = document.createElement('div');
       galleryItem.className = 'gallery-item';
+
       const img = document.createElement('img');
       img.src = src;
       img.alt = alt;
       img.loading = "lazy";
       img.srcset = `${src} 480w`;
       img.sizes = "(max-width: 768px) 33vw, 200px";
+
       img.onerror = () => {
         galleryItem.style.display = 'none';
       };
-      galleryItem.appendChild(img);
 
+      galleryItem.appendChild(img);
       galleryItem.addEventListener('click', () => {
         modalImage.src = src;
         modal.style.display = 'flex';
@@ -278,12 +280,13 @@
       return galleryItem;
     }
 
-    function loadImages(batch = 12) {
+    function loadImages(batch = 9) {
       if (currentImage < 1 || isLoading) return;
       isLoading = true;
 
       for (let i = 0; i < batch && currentImage >= 1; i++) {
-        const item = createGalleryItem(`images/${currentImage}.jpg`, `Gallery Image ${currentImage}`);
+        const src = `images/${currentImage}.jpg`;
+        const item = createGalleryItem(src, `Gallery Image ${currentImage}`);
         gallery.appendChild(item);
         currentImage--;
       }
@@ -293,11 +296,20 @@
       }, 300);
     }
 
-    loadImages(12);
+    function loadInitialImages() {
+      const screenHeight = window.innerHeight;
+      const itemSize = gallery.offsetWidth / 3;
+      const rowsNeeded = Math.ceil(screenHeight / itemSize);
+      const initialCount = rowsNeeded * 3;
+
+      loadImages(initialCount);
+    }
+
+    loadInitialImages();
 
     window.addEventListener('scroll', () => {
-      if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 200) {
-        loadImages();
+      if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 300) {
+        loadImages(9);
       }
     });
 
